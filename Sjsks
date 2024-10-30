@@ -1,0 +1,80 @@
+--[[
+    Script Hub de Velocidade para Roblox - Versão com Entrada de Velocidade
+    Este script permite ao usuário definir uma velocidade personalizada
+    para o personagem no Roblox.
+    
+    Aviso: Modificar jogos com scripts pode resultar em banimento.
+    Use por sua conta e risco.
+--]]
+
+-- Variáveis Globais
+local SpeedToggle = false       -- Estado inicial do modificador de velocidade
+local DefaultSpeed = 16         -- Velocidade padrão do Roblox
+local SpeedAmount = DefaultSpeed -- Inicializa com a velocidade padrão
+
+-- Configurações do Jogador
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+
+-- Função para Aplicar a Velocidade
+local function SetSpeed()
+    if SpeedToggle then
+        Character.Humanoid.WalkSpeed = SpeedAmount
+    else
+        Character.Humanoid.WalkSpeed = DefaultSpeed
+    end
+end
+
+-- Interface do Usuário
+local UserInterface = Instance.new("ScreenGui")
+UserInterface.Name = "SpeedHubUI"
+UserInterface.Parent = game.CoreGui
+
+-- Botão de Ativação de Velocidade
+local SpeedButton = Instance.new("TextButton")
+SpeedButton.Name = "SpeedButton"
+SpeedButton.Text = "Ativar Velocidade"
+SpeedButton.Size = UDim2.new(0, 200, 0, 50)
+SpeedButton.Position = UDim2.new(0.5, -100, 0.5, -25)
+SpeedButton.BackgroundColor3 = Color3.new(0.2, 0.6, 0.8)
+SpeedButton.TextColor3 = Color3.new(1, 1, 1)
+SpeedButton.Font = Enum.Font.SourceSansBold
+SpeedButton.TextSize = 20
+SpeedButton.Parent = UserInterface
+
+-- Caixa de Entrada de Velocidade
+local SpeedInput = Instance.new("TextBox")
+SpeedInput.Name = "SpeedInput"
+SpeedInput.PlaceholderText = "Digite a velocidade"
+SpeedInput.Size = UDim2.new(0, 200, 0, 50)
+SpeedInput.Position = UDim2.new(0.5, -100, 0.5, -85)
+SpeedInput.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+SpeedInput.TextColor3 = Color3.new(1, 1, 1)
+SpeedInput.Font = Enum.Font.SourceSans
+SpeedInput.TextSize = 20
+SpeedInput.Parent = UserInterface
+
+-- Função de Alternância de Velocidade
+SpeedButton.MouseButton1Click:Connect(function()
+    local userSpeed = tonumber(SpeedInput.Text)
+    if userSpeed then
+        SpeedAmount = userSpeed
+    else
+        SpeedAmount = DefaultSpeed -- Define a velocidade padrão se o valor for inválido
+    end
+    
+    SpeedToggle = not SpeedToggle
+    SpeedButton.Text = SpeedToggle and "Desativar Velocidade" or "Ativar Velocidade"
+    SetSpeed()
+end)
+
+-- Detectar Mudanças no Personagem (Caso o jogador respawne)
+Player.CharacterAdded:Connect(function(newCharacter)
+    Character = newCharacter
+    SetSpeed()
+end)
+
+-- Instruções:
+-- 1. Digite a velocidade desejada na caixa de entrada.
+-- 2. Clique em "Ativar Velocidade" para aplicar a velocidade escolhida.
+-- 3. Clique novamente para desativar e voltar para a velocidade padrão.
